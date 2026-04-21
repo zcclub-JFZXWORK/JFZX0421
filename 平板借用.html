@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>教發中心平板借用申請</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Microsoft JhengHei", Arial, sans-serif;
+      background: linear-gradient(135deg, #eef4ff 0%, #f8fbff 100%);
+      color: #1f2937;
+    }
+
+    .page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 580px;
+      background: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 12px 35px rgba(39, 76, 119, 0.12);
+      overflow: hidden;
+      border: 1px solid #e5edf8;
+    }
+
+    .card-header {
+      background: linear-gradient(135deg, #2f6fb3 0%, #4f8edc 100%);
+      color: #fff;
+      padding: 28px 24px 22px;
+    }
+
+    .card-header h1 {
+      margin: 0;
+      font-size: 28px;
+      letter-spacing: 1px;
+    }
+
+    .card-header p {
+      margin: 10px 0 0;
+      font-size: 14px;
+      line-height: 1.7;
+      opacity: 0.95;
+    }
+
+    .form-wrap {
+      padding: 24px;
+    }
+
+    .stock-box {
+      margin-bottom: 20px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: #eef5ff;
+      border: 1px solid #cfe0fb;
+      color: #245b99;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #334155;
+    }
+
+    input {
+      width: 100%;
+      display: block;
+      padding: 12px 14px;
+      border: 1px solid #cfd9e6;
+      border-radius: 12px;
+      font-size: 15px;
+      outline: none;
+      background: #fff;
+    }
+
+    input:focus {
+      border-color: #4f8edc;
+      box-shadow: 0 0 0 4px rgba(79, 142, 220, 0.12);
+    }
+
+    input[readonly] {
+      background: #f3f6fa;
+      color: #64748b;
+      cursor: not-allowed;
+    }
+
+    .hint {
+      margin-top: 6px;
+      font-size: 12px;
+      color: #64748b;
+    }
+
+    .btn-submit {
+      width: 100%;
+      display: block;
+      margin-top: 24px;
+      padding: 14px 16px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #2f6fb3 0%, #4f8edc 100%);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(79, 142, 220, 0.22);
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-1px);
+    }
+
+    .footer-note {
+      margin-top: 14px;
+      font-size: 12px;
+      color: #64748b;
+      text-align: center;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 640px) {
+      .card-header h1 {
+        font-size: 24px;
+      }
+
+      .form-wrap {
+        padding: 18px;
+      }
+
+      .card-header {
+        padding: 22px 18px 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="card">
+      <div class="card-header">
+        <h1>教發中心平板借用申請</h1>
+        <p>
+          請填寫以下資料送出申請，送出後將由管理端進行審核。<br>
+          設備類型已固定為平板。
+        </p>
+      </div>
+
+      <div class="form-wrap">
+        <div id="stock" class="stock-box">目前可借數量讀取中...</div>
+
+        <form
+          id="applyForm"
+          action="https://script.google.com/macros/s/AKfycbwz0d1JdqfSeOnkS_D7MuNs9QY9kouzIDzVwBT907A7ZXrhkPKmGp7r4zSWMvZSKGcKvw/exec"
+          method="POST"
+          target="_blank"
+        >
+          <div class="form-group">
+            <label for="unit">借用單位</label>
+            <input type="text" id="unit" name="unit" required>
+          </div>
+
+          <div class="form-group">
+            <label for="applicant">申請人</label>
+            <input type="text" id="applicant" name="applicant" required>
+          </div>
+
+          <div class="form-group">
+            <label for="phone">聯絡電話 / 分機</label>
+            <input type="text" id="phone" name="phone" placeholder="例如：1234 或 0912345678" required>
+          </div>
+
+          <div class="form-group">
+            <label for="deviceName">設備類型</label>
+            <input type="text" id="deviceName" name="deviceName" value="平板" readonly>
+            <div class="hint">此欄位已固定，無法修改</div>
+          </div>
+
+          <div class="form-group">
+            <label for="quantity">申請數量</label>
+            <input type="number" id="quantity" name="quantity" min="1" required>
+          </div>
+
+          <div class="form-group">
+            <label for="borrowDate">借用日期</label>
+            <input type="date" id="borrowDate" name="borrowDate" required>
+          </div>
+
+          <div class="form-group">
+            <label for="returnDate">歸還日期</label>
+            <input type="date" id="returnDate" name="returnDate" required>
+          </div>
+
+          <button type="submit" class="btn-submit">送出申請</button>
+        </form>
+
+        <div class="footer-note">
+          若申請數量超過目前可借數量，系統會阻止送出。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const webAppUrl = "https://script.google.com/macros/s/AKfycbwz0d1JdqfSeOnkS_D7MuNs9QY9kouzIDzVwBT907A7ZXrhkPKmGp7r4zSWMvZSKGcKvw/exec";
+    let currentStock = 0;
+
+    async function loadStock() {
+      try {
+        const response = await fetch(webAppUrl);
+        const text = await response.text();
+        const data = JSON.parse(text);
+
+        currentStock = Number(data.available || 0);
+        document.getElementById("stock").textContent = "目前可借數量：" + currentStock + " 台";
+      } catch (error) {
+        document.getElementById("stock").textContent = "目前可借數量：讀取失敗";
+        console.error("庫存讀取失敗：", error);
+      }
+    }
+
+    document.getElementById("applyForm").addEventListener("submit", function(e) {
+      const qty = Number(document.getElementById("quantity").value);
+
+      if (!qty || qty < 1) {
+        alert("請輸入正確的申請數量");
+        e.preventDefault();
+        return;
+      }
+
+      if (qty > currentStock) {
+        alert("❌ 庫存不足，目前只剩 " + currentStock + " 台");
+        e.preventDefault();
+      }
+    });
+
+    loadStock();
+  </script>
+</body>
+</html>
