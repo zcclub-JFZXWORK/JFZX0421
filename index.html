@@ -67,6 +67,7 @@
       color: #245b99;
       font-size: 15px;
       font-weight: 700;
+      line-height: 1.6;
     }
 
     .form-group {
@@ -158,12 +159,12 @@
         <h1>教發中心平板借用申請</h1>
         <p>
           請填寫以下資料送出申請，送出後將由管理端進行審核。<br>
-          設備類型已固定為平板。
+          設備類型已固定為平板，庫存會依借用日期區間即時顯示。
         </p>
       </div>
 
       <div class="form-wrap">
-        <div id="stock" class="stock-box">目前可借數量讀取中...</div>
+        <div id="stock" class="stock-box">請先選擇借用日期與歸還日期</div>
 
         <form
           id="applyForm"
@@ -211,7 +212,7 @@
         </form>
 
         <div class="footer-note">
-          若申請數量超過目前可借數量，系統會阻止送出。
+          系統會依借用日期區間計算可借數量；若超過可借台數，將無法送出。
         </div>
       </div>
     </div>
@@ -221,22 +222,86 @@
     const webAppUrl = "https://script.google.com/macros/s/AKfycbwz0d1JdqfSeOnkS_D7MuNs9QY9kouzIDzVwBT907A7ZXrhkPKmGp7r4zSWMvZSKGcKvw/exec";
     let currentStock = 0;
 
-    async function loadStock() {
+    const stockBox = document.getElementById("stock");
+    const borrowDateInput = document.getElementById("borrowDate");
+    const returnDateInput = document.getElementById("returnDate");
+    const form = document.getElementById("applyForm");
+
+    const today = new Date().toISOString().split("T")[0];
+    borrowDateInput.min = today;
+    returnDateInput.min = today;
+
+    function updateDateLimits() {
+      const borrowDate = borrowDateInput.value;
+      if (borrowDate) {
+        returnDateInput.min = borrowDate;
+      } else {
+        returnDateInput.min = today;
+      }
+    }
+
+    async function loadStockByDate() {
+      const borrowDate = borrowDateInput.value;
+      const returnDate = returnDateInput.value;
+
+      if (!borrowDate || !returnDate) {
+        stockBox.textContent = "請先選擇借用日期與歸還日期";
+        currentStock = 0;
+        return;
+      }
+
+      if (returnDate < borrowDate) {
+        stockBox.textContent = "歸還日期不能早於借用日期";
+        currentStock = 0;
+        return;
+      }
+
+      stockBox.textContent = "庫存查詢中...";
+
       try {
-        const response = await fetch(webAppUrl);
+        const url =
+          webAppUrl +
+          "?borrowDate=" + encodeURIComponent(borrowDate) +
+          "&returnDate=" + encodeURIComponent(returnDate);
+
+        const response = await fetch(url);
         const text = await response.text();
         const data = JSON.parse(text);
 
         currentStock = Number(data.available || 0);
-        document.getElementById("stock").textContent = "目前可借數量：" + currentStock + " 台";
+
+        stockBox.textContent =
+          borrowDate + " 至 " + returnDate + " 目前可借數量：" + currentStock + " 台";
       } catch (error) {
-        document.getElementById("stock").textContent = "目前可借數量：讀取失敗";
+        currentStock = 0;
+        stockBox.textContent = "目前可借數量：讀取失敗";
         console.error("庫存讀取失敗：", error);
       }
     }
 
-    document.getElementById("applyForm").addEventListener("submit", function(e) {
+    borrowDateInput.addEventListener("change", () => {
+      updateDateLimits();
+      loadStockByDate();
+    });
+
+    returnDateInput.addEventListener("change", loadStockByDate);
+
+    form.addEventListener("submit", function(e) {
       const qty = Number(document.getElementById("quantity").value);
+      const borrowDate = borrowDateInput.value;
+      const returnDate = returnDateInput.value;
+
+      if (!borrowDate || !returnDate) {
+        alert("請先填寫借用日期與歸還日期");
+        e.preventDefault();
+        return;
+      }
+
+      if (returnDate < borrowDate) {
+        alert("歸還日期不能早於借用日期");
+        e.preventDefault();
+        return;
+      }
 
       if (!qty || qty < 1) {
         alert("請輸入正確的申請數量");
@@ -245,12 +310,12 @@
       }
 
       if (qty > currentStock) {
-        alert("❌ 庫存不足，目前只剩 " + currentStock + " 台");
+        alert("❌ 庫存不足，該日期區間目前只剩 " + currentStock + " 台");
         e.preventDefault();
       }
     });
 
-    loadStock();
+    updateDateLimits();
   </script>
 </body>
 </html>
